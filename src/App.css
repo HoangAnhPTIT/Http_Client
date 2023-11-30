@@ -42,7 +42,7 @@
 
 .container {
   width: 750px;
-  height: 550px;
+  height: 750px;
   border: solid 1px black;
   padding: 10px;
 }
@@ -52,7 +52,9 @@
 }
 
 .upload-section {
-  text-align: end;
   margin-right: 16px;
   margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  justify-content: end;
 }
