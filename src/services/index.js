@@ -18,6 +18,12 @@ const downloadFile = async (fileId) => {
   return data
 }
 
+const deleteFile = async (fileId) => {
+  const response = await axios.delete(`http://localhost:8080/delete?fileId=${fileId}&ipAddress=&note=Un-necessary`)
+  const { data } = response
+
+  return data
+}
 
 const getListIp = async () => {
   const response = await axios.get(`http://localhost:8080/get-list-ip`)
@@ -37,6 +43,7 @@ const getAddress = async () => {
 export {
   getListFile,
   downloadFile,
+  deleteFile,
   getListIp,
   getAddress
 }

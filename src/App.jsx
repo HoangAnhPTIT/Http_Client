@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { Table, Select, Input } from 'antd';
-import { downloadFile, getListFile, getListIp } from './services';
+import { Table, Select, Input, Button } from 'antd';
+import { deleteFile, downloadFile, getListFile, getListIp } from './services';
 import UploadFiles from './components/Upload';
 import Download from './components/Download';
 // import * as _ from 'lodash'
 // import { socket } from './socket';
 import { Client } from '@stomp/stompjs';
+import { DeleteOutlined } from '@ant-design/icons';
 
 function App() {
   const [files, setFiles] = useState([])
@@ -19,16 +20,16 @@ function App() {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'ws://localhost:8080/web-socket'
+      brokerURL: 'ws://localhost:8080/websocket'
     });
 
     client.onConnect = (frame) => {
       // setConnected(true);
       console.log('Connected: ' + frame);
-      client.subscribe('/topic/event/file', (greeting) => {
-        console.log("greeting", JSON.parse(greeting.body).content)
+      client.subscribe('/topic/file-event', (greeting) => {
+        console.log("greeting", greeting.body)
 
-        setMessage(JSON.parse(greeting.body).content)
+        setMessage(greeting.body)
         setReload(!reload)
       });
     };
@@ -79,6 +80,7 @@ function App() {
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
+      setReload(!reload)
     } catch (error) {
       console.log(error)
     }
@@ -115,6 +117,29 @@ function App() {
         )
       }
     },
+    {
+      title: 'Xóa File',
+      key: 'delete',
+      render: (record) => {
+        return (
+          <Button
+            key={record.id}
+            type="primary"
+            icon={<DeleteOutlined />} size="small"
+            onClick={() => {
+              const aaa = async () => {
+                console.log('record.id', record.id)
+                await deleteFile(record.id)
+                setReload(!reload)
+              }
+
+              aaa()
+            }}>
+            Xóa File
+          </Button>
+        )
+      }
+    }
   ];
 
 
@@ -127,13 +152,14 @@ function App() {
 
       <Select
         style={{
-          width: 140,
+          width: 180,
+          marginRight: 4
         }}
         placeholder="Ip address"
         onSelect={(value) => setSelectedIp(value)}
         options={ips}
       />
-      <Search style={{ width: 160 }} placeholder="Tên file" onSearch={(value) => {
+      <Search style={{ width: 180 }} placeholder="Tên file" onSearch={(value) => {
         console.log('value', value)
         setFileName(value)
       }} />
